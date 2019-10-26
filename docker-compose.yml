@@ -1,0 +1,42 @@
+version: '2.3'
+networks:
+  bridge:
+    driver: bridge
+services:
+
+  gitlab:
+    image: gitlab/gitlab-ce:12.1.3-ce.0
+    restart: "always"
+    mem_limit: 2g
+    hostname: 'gitlab.9f0.net'
+    networks:
+    - bridge
+    environment:
+      TZ: "Asia/Shanghai"
+      TIME_ZONE: "Asia/Shanghai"
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url = 'http://gitlab.9f0.net'
+        relative_url_root = '/gitlab/'
+        gitlab_rails['gitlab_relative_url_root'] = "/gitlab/"
+        gitlab_rails['time_zone'] = 'Asia/Shanghai'
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "smtp.163.com"
+        gitlab_rails['smtp_port'] = 25
+        gitlab_rails['smtp_user_name'] = "xxx@163.com"
+        gitlab_rails['smtp_password'] = "xxxxxx"
+        gitlab_rails['smtp_domain'] = "163.com"
+        gitlab_rails['smtp_authentication'] = "login"
+        gitlab_rails['smtp_enable_starttls_auto'] = true
+        gitlab_rails['smtp_tls'] = false
+        gitlab_rails['gitlab_email_from'] = 'xxx@163.com'
+    volumes:
+    - ./localtime:/usr/share/zoneinfo/Asia/Shanghai:ro
+    - ./localtime:/etc/localtime:ro
+    - ./timezone:/etc/timezone:ro
+    - ./gitlab/config:/etc/gitlab
+    - ./gitlab/logs:/var/log/gitlab
+    - ./gitlab/data:/var/opt/gitlab
+    ports:
+    - "80:80"
+    - "22:22"
+    - "443:443"
